@@ -1,4 +1,4 @@
-import { watch, watchEffect, customRef, Ref } from "vue-demi"
+import { watch, customRef, Ref } from "vue-demi"
 
 export type CleanupFunction = () => void
 export type SetCleanupFunction = (cf: CleanupFunction) => void
@@ -32,18 +32,18 @@ export function useSwitchMap<T>(ref: Ref<T>, projectionFromValuesToRefs: (value:
         // all the swicthMapRef dependencies should be notified
         // and the following watchEffect will do it
 
-        // delay because of dependencies mess
+        // delay to avoid dependencies collegting mess
         setTimeout(() => {
             // projectedRef is new, so we have to set a new effect for it
-            watchEffect(() => {
+            watch(projectedRef!, () => {
                 localValue = projectedRef!.value;
 
                 // projectedRef.value has changed, we've got a new value
                 // so we must notify our dependencies
                 dependenciesTrigger()
-            })
+            }, { immediate: true, deep: true }) // the ref could contain an object
         }, 0)
-    })
+    }, { immediate: true, deep: true }) // the ref could contain an object
 
     return customRef((track, trigger) => {
 
