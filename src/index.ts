@@ -32,14 +32,17 @@ export function useSwitchMap<T>(ref: Ref<T>, projectionFromValuesToRefs: (value:
         // all the swicthMapRef dependencies should be notified
         // and the following watchEffect will do it
 
-        // projectedRef is new, so we have to set a new effect for it
-        watchEffect(() => {
-            localValue = projectedRef!.value;
+        // delay because of dependencies mess
+        setTimeout(() => {
+            // projectedRef is new, so we have to set a new effect for it
+            watchEffect(() => {
+                localValue = projectedRef!.value;
 
-            // projectedRef.value has changed, we've got a new value
-            // so we must notify our dependencies
-            dependenciesTrigger()
-        })
+                // projectedRef.value has changed, we've got a new value
+                // so we must notify our dependencies
+                dependenciesTrigger()
+            })
+        }, 0)
     })
 
     return customRef((track, trigger) => {
