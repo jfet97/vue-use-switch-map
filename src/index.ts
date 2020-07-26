@@ -30,7 +30,7 @@ export function useSwitchMap<T>(ref: Ref<T>, projectionFromValuesToRefs: (value:
 
         // an update on ref.value will produce a new projectedRef
         // all the swicthMapRef dependencies should be notified
-        // and the following watchEffect will do it
+        // and the following watchE will do it
 
         // delay to avoid dependencies collegting mess
         setTimeout(() => {
