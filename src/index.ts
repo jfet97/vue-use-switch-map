@@ -1,10 +1,13 @@
-import { watchEffect, customRef } from "vue-demi"
+import { watchEffect, customRef, Ref } from "vue-demi"
 
-export function useSwitchMap(ref, projectionFromValuesToRefs) {
+export type CleanupFunction = () => void
+export type SetCleanupFunction = (cf: CleanupFunction) => void
+
+export function useSwitchMap<T>(ref: Ref<T>, projectionFromValuesToRefs: (value: T, scf: SetCleanupFunction ) => Ref<T>) {
 
     // cleanup function on ref.value update
-    let localCleanup = () => {}
-    const refreshCleanup = cleanup => {
+    let localCleanup: CleanupFunction = () => {}
+    const refreshCleanup = (cleanup: CleanupFunction) => {
         if (typeof cleanup !== "function") {
             localCleanup = () => {}
         } else {
@@ -12,11 +15,13 @@ export function useSwitchMap(ref, projectionFromValuesToRefs) {
         }
     }
 
-    let dependenciesTrigger = () => {}
+    let dependenciesTrigger: () => void = () => {}
 
-    let projectedRef = null;
+    let projectedRef: null | Ref<T> = null;
+
+    let localValue: T | null = null
+
     watchEffect(() => {
-
         // the projection may need the ability to cleanup some stuff
         localCleanup()
         projectedRef = projectionFromValuesToRefs(ref.value, refreshCleanup)
@@ -26,22 +31,32 @@ export function useSwitchMap(ref, projectionFromValuesToRefs) {
         dependenciesTrigger()
     })
 
-    const swicthMapRef = customRef((track, trigger) => {
+    watchEffect(() => {
+        localValue = projectedRef!.value;
+
+        // projectedRef.value has changed, we've got a new value
+        // so we must notify our dependencies
+        dependenciesTrigger()
+    })
+
+    return customRef((track, trigger) => {
 
         dependenciesTrigger = trigger
 
         return {
             get() {
                 track()
-                return projectedRef.value
+                return localValue!
             },
-            // swicthMapRef should never be directly updated because it's value strictly depends on ref.value and projectedRef.valueupdates
+            // not so much sense on changing this customRef value
+            // because it's value strictly depends on ref.value and projectedRef.valueu pdates
             // it will be overwritten as soon as ref.value / projectedRef.value changes
-            set() {}
+            set(value: T) {
+                localValue = value
+                dependenciesTrigger()
+            }
         }
 
     })
-
-    return swicthMapRef
 
 }
