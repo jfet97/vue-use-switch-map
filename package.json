@@ -2,10 +2,17 @@
   "name": "useswitchmap",
   "version": "0.0.1",
   "description": "A composition for Vue that let you fuse a ref with a function that produces refs",
-  "main": "index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "typings": "dist/esm/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npx rimraf dist && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc --module es2015 --outDir dist/esm -d",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs"
   },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/jfet97/useSwitchMap.git"
@@ -22,5 +29,11 @@
   "bugs": {
     "url": "https://github.com/jfet97/useSwitchMap/issues"
   },
-  "homepage": "https://github.com/jfet97/useSwitchMap#readme"
+  "homepage": "https://github.com/jfet97/useSwitchMap#readme",
+  "devDependencies": {
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "vue-demi": "^0.1.4"
+  }
 }
