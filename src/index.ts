@@ -4,7 +4,8 @@ export type CleanupFunction = () => void
 export type SetCleanupFunction = (cf: CleanupFunction) => void
 
 // TODO: controlli runtime oggetti ref varie che nn si sa mais jiakké TS nn è obbligatorio
-// astrai il possibile, grz
+// astrai il possibile, grz E { [s: string]: Ref<T> } nn permette altri valori non Ref<T>, ma 
+// Ref<T> | unknown === unknown :(
 
 export function useSwitchMap<T>(
     ref: Ref<T>,
@@ -112,7 +113,7 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
         setTimeout(() => {
             // projectedRef is new, so we have to set a new effect for each of its props
 
-            Object.entries(projectedRefO!).filter(isRef).forEach(([k, r]) => {
+            Object.entries(projectedRefO!).forEach(([k, r]) => {
 
                 watch(r, () => {
                     localValues.set(k, r.value)
@@ -128,7 +129,7 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
 
     }, { immediate: true, deep: true }) // the ref could contain an object
 
-    return Object.fromEntries(Object.entries(projectedRefO!).filter(isRef).map(([k, _]) => {
+    return Object.fromEntries(Object.entries(projectedRefO!).map(([k, _]) => {
 
         const kRef = customRef((track, trigger) => {
             dependenciesTriggers.set(k, trigger)
