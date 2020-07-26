@@ -1,0 +1,1 @@
+scrivi qlcs di intelleggibile

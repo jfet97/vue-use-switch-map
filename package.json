@@ -32,6 +32,7 @@
   "homepage": "https://github.com/jfet97/useSwitchMap#readme",
   "devDependencies": {
     "@vue/composition-api": "^1.0.0-beta.6",
+    "@vue/reactivity": "^3.0.0-rc.4",
     "typescript": "^3.9.7",
     "vue": "^2.6.11"
   },
