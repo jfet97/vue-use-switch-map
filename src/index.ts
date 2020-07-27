@@ -7,10 +7,10 @@ export type SetCleanupFunction = (cf: CleanupFunction) => void
 // astrai il possibile, grz E { [s: string]: Ref<T> } nn permette altri valori non Ref<T>, ma 
 // Ref<T> | unknown === unknown :(
 
-export function useSwitchMap<T>(
+export function useSwitchMap<T, U>(
     ref: Ref<T>,
-    projectionFromValuesToRefs: (value: T, scf: SetCleanupFunction) => Ref<T>
-): Ref<T> {
+    projectionFromValuesToRefs: (value: T, scf: SetCleanupFunction) => Ref<U>
+): Ref<U> {
 
     // cleanup function on ref.value update
     let localCleanup: CleanupFunction = () => { }
@@ -24,9 +24,9 @@ export function useSwitchMap<T>(
 
     let dependenciesTrigger: () => void = () => { }
 
-    let projectedRef: null | Ref<T> = null;
+    let projectedRef: null | Ref<U> = null;
 
-    let localValue: T | null = null
+    let localValue: U | null = null
 
     // projectedRef must not register this function as dependency
     // it will have its own
@@ -46,7 +46,7 @@ export function useSwitchMap<T>(
             // projectedRef.value has changed, we've got a new value
             // so we must notify our dependencies
             dependenciesTrigger()
-        }, { immediate: true, deep: true }) // the ref could contain an object
+        }, { immediate: true, deep: true })
 
     }, { immediate: true, deep: true }) // the ref could contain an object
 
@@ -66,7 +66,7 @@ export function useSwitchMap<T>(
             // not so much sense on changing this customRef value
             // because it's value strictly depends on ref.value and projectedRef.value updates
             // it will be overwritten as soon as ref.value / projectedRef.value changes
-            set(value: T) {
+            set(value: U) {
                 localValue = value
                 dependenciesTrigger()
             }
