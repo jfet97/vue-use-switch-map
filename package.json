@@ -1,6 +1,6 @@
 {
   "name": "useswitchmap",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "A composition for Vue that let you fuse a ref with a function that produces refs",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -8,7 +8,11 @@
   "scripts": {
     "build": "npx rimraf dist && npm run build:esm && npm run build:cjs",
     "build:esm": "tsc --module es2015 --outDir dist/esm -d",
-    "build:cjs": "tsc --module commonjs --outDir dist/cjs"
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
+    "watch": "tsc --watch",
+    "types:check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest  --watchAll"
   },
   "files": [
     "dist"
@@ -22,7 +26,12 @@
     "vue3",
     "composition",
     "api",
-    "switchmap"
+    "switchmap",
+    "hook",
+    "vue-hooks",
+    "composition-api",
+    "vue-composable",
+    "composable"
   ],
   "author": "Andrea Simone Costa andrysimo1997@gmail.com",
   "license": "MIT",
@@ -31,12 +40,15 @@
   },
   "homepage": "https://github.com/jfet97/useSwitchMap#readme",
   "devDependencies": {
+    "@types/jest": "^26.0.7",
     "@vue/composition-api": "^1.0.0-beta.6",
-    "@vue/reactivity": "^3.0.0-rc.4",
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.3",
     "typescript": "^3.9.7",
     "vue": "^2.6.11"
   },
   "dependencies": {
     "vue-demi": "^0.1.4"
-  }
+  },
+  "_moduleAliases": {}
 }

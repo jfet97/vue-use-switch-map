@@ -9,10 +9,15 @@
         "outDir": "dist",
         "rootDir": "./src",
         "moduleResolution": "node",
-        "strict": true
+        "strict": true,
+        "esModuleInterop": true
     },
     "exclude": [
         "node_modules",
-        "**/node_modules/*"
-    ]
+        "**/node_modules/*",
+        "test"
+    ],
+    "types": [
+        "jest"
+    ],
 }
