@@ -12,7 +12,7 @@
     "watch": "tsc --watch",
     "types:check": "tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest  --watchAll"
+    "test:watch": "jest --watchAll --verbose false"
   },
   "files": [
     "dist"

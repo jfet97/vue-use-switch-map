@@ -1,7 +1,7 @@
 module.exports = {
-  verbose: true,
+  verbose: false,
   collectCoverage: true,
-  coverageReporters: ['text'],
+  coverageReporters: ['text', 'html'],
   preset: 'ts-jest',
   testRegex: '/test/.*\\.test\\.ts$',
 };
