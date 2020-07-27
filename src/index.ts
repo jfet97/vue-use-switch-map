@@ -37,20 +37,22 @@ export function useSwitchMap<T>(
 
         // an update on ref.value will produce a new projectedRef
         // all the swicthMapRef dependencies should be notified
-        // and the following watch will do it
+        // the following watch will do it
 
-        // delay to avoid dependencies collecting mess
-        setTimeout(() => {
-            // projectedRef is new, so we have to set a new effect for it
-            watch(projectedRef!, () => {
-                localValue = projectedRef!.value;
+        // projectedRef is new, so we have to set a new effect for it
+        watch(projectedRef!, () => {
+            localValue = projectedRef!.value;
 
-                // projectedRef.value has changed, we've got a new value
-                // so we must notify our dependencies
-                dependenciesTrigger()
-            }, { immediate: true, deep: true }) // the ref could contain an object
-        }, 0)
+            // projectedRef.value has changed, we've got a new value
+            // so we must notify our dependencies
+            dependenciesTrigger()
+        }, { immediate: true, deep: true }) // the ref could contain an object
+
     }, { immediate: true, deep: true }) // the ref could contain an object
+
+
+
+
 
     return customRef((track, trigger) => {
 
@@ -109,27 +111,26 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
         // all the swicthMapRefO dependencies should be notified
         // and the following watch will do it
 
-        // delay to avoid dependencies collecting mess
-        setTimeout(() => {
-            // projectedRef is new, so we have to set a new effect for each of its props
 
-            Object.entries(projectedRefO!).filter(([_,r]) => isRef(r)).forEach(([k, r]) => {
+        // projectedRef is new, so we have to set a new effect for each of its props
 
-                watch(r, () => {
-                    localValues.set(k, r.value)
+        Object.entries(projectedRefO!).filter(([_, r]) => isRef(r)).forEach(([k, r]) => {
+
+            watch(r, () => {
+                localValues.set(k, r.value)
 
 
-                    // projectedRef.value has changed, we've got a new value
-                    // so we must notify our dependencies
-                    dependenciesTriggers.get(k)?.() // first time there is no trigger
-                }, { immediate: true, deep: true }) // the ref could contain an object
-            })
+                // projectedRef.value has changed, we've got a new value
+                // so we must notify our dependencies
+                dependenciesTriggers.get(k)?.() // first time there is no trigger
+            }, { immediate: true, deep: true }) // the ref could contain an object
+        })
 
-        }, 0)
+
 
     }, { immediate: true, deep: true }) // the ref could contain an object
 
-    const refEntries = Object.entries(projectedRefO!).filter(([_,r]) => isRef(r)).map(([k, _]) => {
+    const refEntries = Object.entries(projectedRefO!).filter(([_, r]) => isRef(r)).map(([k, _]) => {
 
         const kRef = customRef((track, trigger) => {
             dependenciesTriggers.set(k, trigger)
@@ -154,8 +155,6 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
     })
 
     const nonRefEntries = Object.entries(projectedRefO!).filter(([_, r]) => !isRef(r))
-
-    console.log({ refEntries, nonRefEntries }, Object.fromEntries([...refEntries, ...nonRefEntries]))
 
     return Object.fromEntries([...refEntries, ...nonRefEntries])
 
