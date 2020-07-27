@@ -113,7 +113,7 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
         setTimeout(() => {
             // projectedRef is new, so we have to set a new effect for each of its props
 
-            Object.entries(projectedRefO!).forEach(([k, r]) => {
+            Object.entries(projectedRefO!).filter(([_,r]) => isRef(r)).forEach(([k, r]) => {
 
                 watch(r, () => {
                     localValues.set(k, r.value)
@@ -129,7 +129,7 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
 
     }, { immediate: true, deep: true }) // the ref could contain an object
 
-    return Object.fromEntries(Object.entries(projectedRefO!).map(([k, _]) => {
+    const refEntries = Object.entries(projectedRefO!).filter(([_,r]) => isRef(r)).map(([k, _]) => {
 
         const kRef = customRef((track, trigger) => {
             dependenciesTriggers.set(k, trigger)
@@ -151,6 +151,12 @@ export function useSwitchMapO<T, R extends { [s: string]: Ref<T> }>(
         })
 
         return [k, kRef]
-    })) as R
+    })
+
+    const nonRefEntries = Object.entries(projectedRefO!).filter(([_, r]) => !isRef(r))
+
+    console.log({ refEntries, nonRefEntries }, Object.fromEntries([...refEntries, ...nonRefEntries]))
+
+    return Object.fromEntries([...refEntries, ...nonRefEntries])
 
 }
