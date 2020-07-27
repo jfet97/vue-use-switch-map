@@ -1,15 +1,15 @@
-import Vue from "vue"
-import Composition from "@vue/composition-api"
-import { ref, Ref, isRef, computed } from "@vue/composition-api"
+import Vue from 'vue'
+import Composition from '@vue/composition-api'
+import { ref, Ref, isRef, computed } from '@vue/composition-api'
 
 Vue.use(Composition)
 
-import { useSwitchMap, SetCleanupFunction } from "../src"
-import { timer } from "./util"
+import { useSwitchMap, SetCleanupFunction } from '../src'
+import { timer } from './util'
 
 const pure = <T>(v: T) => ref(v)
-const pureRefProjection = <T>(v: T, cleanup: SetCleanupFunction) => (pure(v) as Ref<T>) // see https://github.com/vuejs/vue-next/issues/1324#issuecomment-641150163
-const pureRefObjProjection = <T>(v: T, cleanup: SetCleanupFunction) => (pure({ ...v }) as Ref<T>) // change the reference
+const pureRefProjection = <T>(v: T, cleanup: SetCleanupFunction) => pure(v) as Ref<T> // see https://github.com/vuejs/vue-next/issues/1324#issuecomment-641150163
+const pureRefObjProjection = <T>(v: T, cleanup: SetCleanupFunction) => pure({ ...v }) as Ref<T> // change the reference
 
 describe('it should pass', () => {
     it('should pass', () => {
@@ -18,19 +18,18 @@ describe('it should pass', () => {
 })
 
 describe('base ref', () => {
-
     it('should return a ref', () => {
         expect(isRef(useSwitchMap(pure(10), pureRefProjection))).toBeTruthy()
     })
 
     it('should return a ref with value 10', () => {
-        const tenRef = useSwitchMap(pure(10), pureRefProjection);
+        const tenRef = useSwitchMap(pure(10), pureRefProjection)
         expect(tenRef.value).toBe(10)
     })
 
     it('should be updatetd to value 11', async () => {
         const tenRef = pure(10)
-        const cloneTenRef = useSwitchMap(tenRef, pureRefProjection);
+        const cloneTenRef = useSwitchMap(tenRef, pureRefProjection)
 
         tenRef.value++
         // apart for the initial setting,
@@ -42,11 +41,10 @@ describe('base ref', () => {
     it('should be updatetd to value 11', (done) => {
         const tenRef = pure(10)
         const cloneTenRef = useSwitchMap(tenRef, (v, c) => {
-
             const cloneRef = pure(v)
 
             setTimeout(async () => {
-                cloneRef.value++;
+                cloneRef.value++
                 await timer(0)
 
                 test()
@@ -54,7 +52,7 @@ describe('base ref', () => {
             }, 100)
 
             return cloneRef
-        });
+        })
 
         function test() {
             expect(cloneTenRef.value).toBe(11)
@@ -64,22 +62,22 @@ describe('base ref', () => {
 
     it(`should return a ref with value '10'`, () => {
         const tenRef = pure(10)
-        const cloneTenRef = useSwitchMap(tenRef, (v, c) => pureRefProjection(String(v), c));
-        expect(cloneTenRef.value).toBe("10")
+        const cloneTenRef = useSwitchMap(tenRef, (v, c) => pureRefProjection(String(v), c))
+        expect(cloneTenRef.value).toBe('10')
     })
 
     it(`should be updated with value '11'`, async () => {
         const tenRef = pure(10)
-        const cloneTenRef = useSwitchMap(tenRef, (v, c) => pureRefProjection(String(v), c));
+        const cloneTenRef = useSwitchMap(tenRef, (v, c) => pureRefProjection(String(v), c))
 
         tenRef.value++
         await timer(0)
-        expect(cloneTenRef.value).toBe("11")
+        expect(cloneTenRef.value).toBe('11')
     })
 
     it(`should be updated with values 9 -> 11 -> 10`, async () => {
         const tenRef = pure(10)
-        const cloneTenRef = useSwitchMap(tenRef, pureRefProjection);
+        const cloneTenRef = useSwitchMap(tenRef, pureRefProjection)
         const cloneCloneTenRef = computed(() => cloneTenRef.value)
 
         tenRef.value = 9
@@ -96,28 +94,24 @@ describe('base ref', () => {
         await timer(0)
         expect(cloneTenRef.value).toBe(10)
         expect(cloneCloneTenRef.value).toBe(10)
-
     })
-
 })
 
 describe('object ref', () => {
-
-
     it('should return a ref with value { data: 10 }', () => {
-        const tenObjRef = useSwitchMap(pure({ data: 10 }), pureRefObjProjection);
+        const tenObjRef = useSwitchMap(pure({ data: 10 }), pureRefObjProjection)
         expect(tenObjRef.value).toEqual({ data: 10 })
     })
 
     it('should be different references', async () => {
         const tenObjRef = pure({ data: 10 })
-        const cloneTenObjRef = useSwitchMap(tenObjRef, pureRefObjProjection);
+        const cloneTenObjRef = useSwitchMap(tenObjRef, pureRefObjProjection)
         expect(tenObjRef).not.toBe(cloneTenObjRef)
     })
 
     it('should be updatetd to value { data: 11 }', async () => {
         const tenObjRef = pure({ data: 10 })
-        const cloneTenObjRef = useSwitchMap(tenObjRef, pureRefObjProjection);
+        const cloneTenObjRef = useSwitchMap(tenObjRef, pureRefObjProjection)
 
         tenObjRef.value.data++
         await timer(0)
@@ -131,7 +125,7 @@ describe('object ref', () => {
             const cloneRef = pure(clone)
 
             setTimeout(async () => {
-                cloneRef.value.data++;
+                cloneRef.value.data++
                 await timer(0)
 
                 test()
@@ -139,19 +133,16 @@ describe('object ref', () => {
             }, 100)
 
             return cloneRef
-        });
+        })
 
         function test() {
             expect(cloneTenObjRef.value).toEqual({ data: 11 })
             done()
         }
     })
-
 })
 
 describe('cleanup', () => {
-
-
     it(`should transform the returned ref into '0!!!' and there should not be cleanup calls`, async () => {
         const counterRef = ref(0)
 
@@ -159,29 +150,27 @@ describe('cleanup', () => {
             counterRef.value++
         }
 
-        let mockedCleanup: any;
+        let mockedCleanup: any
         const switchMappedRef = useSwitchMap(counterRef, (value, cleanup) => {
             const newRef = ref(`${value} is now a string`)
 
             const interval = setInterval(() => {
-                newRef.value += "!"
+                newRef.value += '!'
             }, 1000)
 
             mockedCleanup = jest.fn(() => {
                 clearInterval(interval)
-            });
+            })
 
             cleanup(mockedCleanup)
 
-            return newRef;
+            return newRef
         })
-
 
         await timer(3200)
 
-        expect(switchMappedRef.value).toBe("0 is now a string!!!")
+        expect(switchMappedRef.value).toBe('0 is now a string!!!')
         expect(mockedCleanup!.mock.calls.length).toBe(0)
-
     })
 
     it(`should transform the returned ref into '4!!!' and there should be 4 cleanup calls`, () => {
@@ -189,12 +178,3 @@ describe('cleanup', () => {
         expect(1).toBe(1)
     })
 })
-
-
-
-
-
-
-
-
-
