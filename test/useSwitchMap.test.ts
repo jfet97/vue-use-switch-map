@@ -177,4 +177,41 @@ describe('cleanup', () => {
         // THIS IS A MESS WITH OR WITHOUT JEST TIMERS. PLZ HELP XD
         expect(1).toBe(1)
     })
+
+    it(`the old projectedRef should not interfere with the returned ref`, async () => {
+        const counterRef = ref(0)
+
+        function incrementCounter() {
+            counterRef.value++
+        }
+
+        let doIt = true
+        let mockedCleanup: any = undefined
+
+        const switchMappedRef = useSwitchMap(counterRef, (value, cleanup) => {
+            const newRef = ref(`${value} is now a string`)
+
+            if (doIt) {
+                const interval = setInterval(() => {
+                    newRef.value += '!'
+                }, 1000)
+
+                mockedCleanup = jest.fn(() => {
+                    clearInterval(interval)
+                })
+                cleanup(mockedCleanup)
+            }
+
+            doIt = false
+
+            return newRef
+        })
+
+        incrementCounter()
+
+        await timer(3200)
+
+        expect(switchMappedRef.value).toBe('1 is now a string')
+        expect(mockedCleanup!.mock.calls.length).toBe(1)
+    })
 })

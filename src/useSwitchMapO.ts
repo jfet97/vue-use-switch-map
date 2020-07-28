@@ -16,20 +16,29 @@ export function useSwitchMapO<T, R extends object>(
         }
     }
 
+    // ref counter weakmap to track the "id" of each projectedRefsO
+    // because only the last one is allowed to change the value
+    // of the ref returned by useSwitchMapO
+    const refCounters = new WeakMap<object, number>()
+    let counter = 0
+
     const dependenciesTriggers = new Map<string, () => void>()
 
-    let projectedRefO: null | R = null
+    let projectedRefsO: null | R = null
 
     const localValues = new Map<string, T>()
 
-    // projectedRefO must not register this function as dependency
+    // projectedRefsO must not register this function as dependency
     // it will have its own
     watch(
         ref,
         () => {
             // the projection may need the ability to cleanup some stuff
             localCleanup()
-            projectedRefO = projectionFromValuesToRefs(ref.value, refreshCleanup)
+            projectedRefsO = projectionFromValuesToRefs(ref.value, refreshCleanup)
+
+            // set the counter value for the received projected refs object
+            refCounters.set(projectedRefsO, ++counter)
 
             // an update on ref.value will produce a new projectedRef
             // all the swicthMapRefO dependencies should be notified
@@ -37,17 +46,20 @@ export function useSwitchMapO<T, R extends object>(
 
             // projectedRef is new, so we have to set a new effect for each of its props
 
-            Object.entries(projectedRefO!)
+            Object.entries(projectedRefsO!)
                 .filter(([, r]) => isRef(r))
                 .forEach(([k, r]) => {
                     watch(
                         r,
                         () => {
-                            localValues.set(k, r.value)
+                            // only the last projectedRefsO is allowed to change the value
+                            if (refCounters.get(projectedRefsO!)! === counter) {
+                                localValues.set(k, r.value)
 
-                            // projectedRef.value has changed, we've got a new value
-                            // so we must notify our dependencies
-                            dependenciesTriggers.get(k)?.() // first time there is no trigger
+                                // somethinghas changed, we've got a new value
+                                // so we must notify our dependencies
+                                dependenciesTriggers.get(k)?.() // first time there is no trigger
+                            }
                         },
                         { immediate: true, deep: true }
                     ) // the ref could contain an object
@@ -56,7 +68,7 @@ export function useSwitchMapO<T, R extends object>(
         { immediate: true, deep: true }
     ) // the ref could contain an object
 
-    const refEntries = Object.entries(projectedRefO!)
+    const refEntries = Object.entries(projectedRefsO!)
         .filter(([, r]) => isRef(r))
         .map(([k]) => {
             const kRef = customRef((track, trigger) => {
@@ -69,8 +81,8 @@ export function useSwitchMapO<T, R extends object>(
                     },
 
                     // not so much sense on changing this customRef value
-                    // because it's value strictly depends on ref.value and projectedRefO[k] updates
-                    // it will be overwritten as soon as ref.value / projectedRefO[k] changes
+                    // because it's value strictly depends on ref.value and projectedRefsO[k] updates
+                    // it will be overwritten as soon as ref.value / projectedRefsO[k] changes
                     set(value: T) {
                         localValues.set(k, value)!
                         trigger()
@@ -81,7 +93,7 @@ export function useSwitchMapO<T, R extends object>(
             return [k, kRef]
         })
 
-    const nonRefEntries = Object.entries(projectedRefO!).filter(([, r]) => !isRef(r))
+    const nonRefEntries = Object.entries(projectedRefsO!).filter(([, r]) => !isRef(r))
 
     return Object.fromEntries([...refEntries, ...nonRefEntries])
 }

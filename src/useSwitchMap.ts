@@ -16,6 +16,12 @@ export function useSwitchMap<T, U>(
         }
     }
 
+    // ref counter weakmap to track the "id" of each projectedRef
+    // because only the last one is allowed to change the value
+    // of the ref returned by useSwitchMap
+    const refCounters = new WeakMap<Ref<any>, number>()
+    let counter = 0
+
     let dependenciesTrigger: () => void = () => {}
 
     let projectedRef: null | Ref<U> = null
@@ -31,6 +37,9 @@ export function useSwitchMap<T, U>(
             localCleanup()
             projectedRef = projectionFromValuesToRefs(ref.value, refreshCleanup)
 
+            // set the counter value for the received projected ref
+            refCounters.set(projectedRef, ++counter)
+
             // an update on ref.value will produce a new projectedRef
             // all the swicthMapRef dependencies should be notified
             // the following watch will do it
@@ -39,11 +48,14 @@ export function useSwitchMap<T, U>(
             watch(
                 projectedRef!,
                 () => {
-                    localValue = projectedRef!.value
+                    // only the last projectedRef is allowed to change the value
+                    if (refCounters.get(projectedRef!)! === counter) {
+                        localValue = projectedRef!.value
 
-                    // projectedRef.value has changed, we've got a new value
-                    // so we must notify our dependencies
-                    dependenciesTrigger()
+                        // projectedRef.value has changed, we've got a new value
+                        // so we must notify our dependencies
+                        dependenciesTrigger()
+                    }
                 },
                 { immediate: true, deep: true }
             )
