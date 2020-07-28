@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.14% </span>
+                <span class="strong">97.06% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>34/35</span>
+                <span class='fraction'>33/34</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.86% </span>
+                <span class="strong">93.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>13/14</span>
+                <span class='fraction'>14/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">97.06% </span>
+                <span class="strong">96.97% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>33/34</span>
+                <span class='fraction'>32/33</span>
             </div>
         
             
@@ -149,14 +149,7 @@
 <a name='L90'></a><a href='#L90'>90</a>
 <a name='L91'></a><a href='#L91'>91</a>
 <a name='L92'></a><a href='#L92'>92</a>
-<a name='L93'></a><a href='#L93'>93</a>
-<a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a>
-<a name='L99'></a><a href='#L99'>99</a>
-<a name='L100'></a><a href='#L100'>100</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L93'></a><a href='#L93'>93</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -174,12 +167,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
@@ -194,10 +181,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -210,6 +193,8 @@
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">27x</span>
 <span class="cline-any cline-yes">27x</span>
@@ -217,6 +202,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -273,12 +259,6 @@ export function useSwitchMapO&lt;T, R extends object&gt;(
         }
     }
 &nbsp;
-    // ref counter weakmap to track the "id" of each projectedRefsO
-    // because only the last one is allowed to change the value
-    // of the ref returned by useSwitchMapO
-    const refCounters = new WeakMap&lt;object, number&gt;()
-    let counter = 0
-&nbsp;
     const dependenciesTriggers = new Map&lt;string, () =&gt; void&gt;()
 &nbsp;
     let projectedRefsO: null | R = null
@@ -294,30 +274,29 @@ export function useSwitchMapO&lt;T, R extends object&gt;(
             localCleanup()
             projectedRefsO = projectionFromValuesToRefs(ref.value, refreshCleanup)
 &nbsp;
-            // set the counter value for the received projected refs object
-            refCounters.set(projectedRefsO, ++counter)
-&nbsp;
             // an update on ref.value will produce a new projectedRef
             // all the swicthMapRefO dependencies should be notified
             // and the following watch will do it
 &nbsp;
             // projectedRef is new, so we have to set a new effect for each of its props
-&nbsp;
             Object.entries(projectedRefsO!)
                 .filter(([, r]) =&gt; isRef(r))
                 .forEach(([k, r]) =&gt; {
                     watch(
                         r,
-                        () =&gt; {
-                            // only the last projectedRefsO is allowed to change the value
-                            <span class="missing-if-branch" title="else path not taken" >E</span>if (refCounters.get(projectedRefsO!)! === counter) {
-                                localValues.set(k, r.value)
+                        (() =&gt; {
+                            const thatProjectedRefsO = projectedRefsO
+                            return () =&gt; {
+                                // only the last projectedRefsO is allowed to change the value
+                                <span class="missing-if-branch" title="else path not taken" >E</span>if (thatProjectedRefsO === projectedRefsO) {
+                                    localValues.set(k, r.value)
 &nbsp;
-                                // somethinghas changed, we've got a new value
-                                // so we must notify our dependencies
-                                dependenciesTriggers.get(k)?.() // first time there is no trigger
+                                    // somethinghas changed, we've got a new value
+                                    // so we must notify our dependencies
+                                    dependenciesTriggers.get(k)?.() // first time there is no trigger
+                                }
                             }
-                        },
+                        })(),
                         { immediate: true, deep: true }
                     ) // the ref could contain an object
                 })
@@ -361,7 +340,7 @@ export function useSwitchMapO&lt;T, R extends object&gt;(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Jul 28 2020 15:43:19 GMT+0200 (GMT+02:00)
+                at Tue Jul 28 2020 16:14:15 GMT+0200 (GMT+02:00)
             </div>
         </div>
         <script src="../prettify.js"></script>

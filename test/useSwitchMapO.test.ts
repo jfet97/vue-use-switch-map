@@ -82,7 +82,7 @@ describe('useSwicthMapO', () => {
         expect(obj.boolean).toBe(true)
     })
 
-    it(`should be uable to externally update the swicthMappedRef`, async () => {
+    it(`should be unable to externally update the swicthMappedRef`, async () => {
         const aRef = ref(0)
         const obj = useSwitchMapO(aRef, threePropsProjectionInnerMutation)
 

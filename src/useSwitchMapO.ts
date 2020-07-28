@@ -16,12 +16,6 @@ export function useSwitchMapO<T, R extends object>(
         }
     }
 
-    // ref counter weakmap to track the "id" of each projectedRefsO
-    // because only the last one is allowed to change the value
-    // of the ref returned by useSwitchMapO
-    const refCounters = new WeakMap<object, number>()
-    let counter = 0
-
     const dependenciesTriggers = new Map<string, () => void>()
 
     let projectedRefsO: null | R = null
@@ -37,30 +31,29 @@ export function useSwitchMapO<T, R extends object>(
             localCleanup()
             projectedRefsO = projectionFromValuesToRefs(ref.value, refreshCleanup)
 
-            // set the counter value for the received projected refs object
-            refCounters.set(projectedRefsO, ++counter)
-
             // an update on ref.value will produce a new projectedRef
             // all the swicthMapRefO dependencies should be notified
             // and the following watch will do it
 
             // projectedRef is new, so we have to set a new effect for each of its props
-
             Object.entries(projectedRefsO!)
                 .filter(([, r]) => isRef(r))
                 .forEach(([k, r]) => {
                     watch(
                         r,
-                        () => {
-                            // only the last projectedRefsO is allowed to change the value
-                            if (refCounters.get(projectedRefsO!)! === counter) {
-                                localValues.set(k, r.value)
+                        (() => {
+                            const thatProjectedRefsO = projectedRefsO
+                            return () => {
+                                // only the last projectedRefsO is allowed to change the value
+                                if (thatProjectedRefsO === projectedRefsO) {
+                                    localValues.set(k, r.value)
 
-                                // somethinghas changed, we've got a new value
-                                // so we must notify our dependencies
-                                dependenciesTriggers.get(k)?.() // first time there is no trigger
+                                    // somethinghas changed, we've got a new value
+                                    // so we must notify our dependencies
+                                    dependenciesTriggers.get(k)?.() // first time there is no trigger
+                                }
                             }
-                        },
+                        })(),
                         { immediate: true, deep: true }
                     ) // the ref could contain an object
                 })
