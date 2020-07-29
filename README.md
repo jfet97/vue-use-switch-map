@@ -24,7 +24,7 @@ function useSwitchMap<T, U>(
 ): Ref<U>
 ```
 
-`useSwitchMap` takes a ref and a function from values to refs, returning a ref that will see its value changed because of two main reasons: the input function does change its returned ref's value, or the input ref's value has been changed.\
+`useSwitchMap` takes a ref and a function from values to refs, returning a ref that will see its value changed because of two main reasons: the composed function does change its returned ref's value, or the input ref's value has been changed.\
 The first case is not special at all, I'm sure you already use some Vue 3 composition functions that internally listen to some events, or use some timeouts, promises, etc. and therefore change the ref's value they return in response to those happenings.\
 The second case is more tricky, because lot fo stuff happens when the input ref's value (`Res<T>`) is changed. The `projectionFromValuesToRefs` function is re-runned from scratch, producing a new ref `R`. This ref is automagically substituted to the one that `useSwitchMap` has returned, in such a way that it will receive only the updates from the last ref `R` produced.
 
