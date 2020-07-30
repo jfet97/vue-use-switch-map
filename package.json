@@ -1,7 +1,7 @@
 {
     "name": "useswitchmap",
     "version": "0.1.1",
-    "description": "A composition for Vue that let you fuse a ref with a function that produces refs",
+    "description": "A Vue composition that let you compose a ref with a function from values to refs",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
     "typings": "dist/esm/index.d.ts",
