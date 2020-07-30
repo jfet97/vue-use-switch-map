@@ -10,7 +10,7 @@ A Vue 3 composition package that exports:
 -   `useSwitchMapO`, a function to compose a ref with a function from values to objects containing refs
 
 It works with both Vue 3 and Vue 2 + `@vue/composition-api` because I'm using [vue-demi](https://github.com/antfu/vue-demi), and it is written in TypeScript.\
-You can read more about this package in this [blog post](https://dev.to/jfet97/vue-3-refs-are-monads-4i27-temp-slug-6203971?preview=7b2d40cf956a3113ae1470082169faec440ad2f0b0cf16c30fd4116a95543ce194589b5b23db47c5cb3601a1c7180f78316a5eb2e1eaf2dcde3a739e).
+You can read more about this package in this [blog post](https://dev.to/jfet97/do-vue-3-refs-admit-a-monad-instance-5fan).
 
 Menu:
 
@@ -84,6 +84,7 @@ const switchMappedRef = useSwitchMap(mouseClickPoisitonRef, (initP, cleanup) => 
 ```
 
 Here `switchMappedRef` will be a ref to an array that will be updated with the pointer positions after the first click. Each time we click somewhere on the screen, the function that tracks the mouse will be called again, so `switchMappedRef` will be updated with a new, fresh array. We do use the `cleanup` function to set a function that will remove the event listener because, even if older listeners do not interfere with `switchMappedRef`, we don't like memory leaks.
+
 &nbsp;
 
 ## useSwitchMapO
@@ -160,6 +161,7 @@ const useFetch = (url, cleanup) => {
 ```
 
 In this case, though, the promise will rejects with an `AbortError`, so the magic of `useSwitchMapO` is still needed to prevent the problems we have just discussed.
+
 &nbsp;
 
 ## Common needs
