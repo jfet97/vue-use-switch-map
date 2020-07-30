@@ -183,7 +183,7 @@ const makeUseSomething = (config) => (value [, cleanup]) => useSomething(value, 
 const switchMappedRef = useSwitchMap(aRef, makeUseSomething(config))
 ```
 
-### The composiiton involves more than one ref
+### The composition involves more than one ref
 
 Let's say we need to bind more than one ref to a composition function:
 
