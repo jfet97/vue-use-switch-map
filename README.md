@@ -155,6 +155,55 @@ const useFetch = (url, cleanup) => {
 ```
 
 In this case, though, the promise will rejects with an `AbortError`, so the magic of `useSwitchMapO` is still needed to prevent the problems we have just discussed.
+&nbsp;
+
+## Common situations
+
+### The Vue composition function depends on some static configuration
+
+Let's say we have a Vue composition function like the following:
+
+```js
+function useSomething(value, config [, cleanup]) {
+    // ...
+    return useSomethingRef
+}
+```
+
+We want to bind such a function to `aRef` using `useSwitchMap`. How do we do that?
+
+```js
+const makeUseSomething = (config) => (value [, cleanup]) => useSomething(value, config [, cleanup])
+
+const switchMappedRef = useSwitchMap(aRef, makeUseSomething(config))
+```
+
+### The composiiton involves more than one ref
+
+Let's say we need to bind more than one ref to a composition function:
+
+```js
+function useSomething(value, anotherValue [, cleanup]) {
+    // ...
+    return useSomethingRef
+}
+
+const switchMappedRef = useSwitchMap(aRef, anotherRef, useSomething)
+// that's not how 'useSwitchMap' works
+```
+
+How do we do that? Simple, we have to create an object ref:
+
+```js
+const objectRef = computed(() => ({ value: aRef.value, anotherValue: anotherRef.value }))
+
+const switchMappedRef = useSwitchMap(
+    objectRef,
+    (object [, cleanup]) => useSomething(object.value, object.anotherValue [, cleanup])
+)
+```
+
+&nbsp;
 
 ## Contribute
 
