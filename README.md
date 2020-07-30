@@ -1,4 +1,4 @@
-# useswitchmap
+# vue-use-switch-map
 
 ```sh
 npm i -S vue-use-switch-map
