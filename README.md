@@ -12,7 +12,12 @@ A Vue 3 composition package that exports:
 It works with both Vue 3 and Vue 2 + `@vue/composition-api` because I'm using [vue-demi](https://github.com/antfu/vue-demi), and it is written in TypeScript.\
 You can read more about this package in this [blog post](https://dev.to/jfet97/vue-3-refs-are-monads-4i27-temp-slug-6203971?preview=7b2d40cf956a3113ae1470082169faec440ad2f0b0cf16c30fd4116a95543ce194589b5b23db47c5cb3601a1c7180f78316a5eb2e1eaf2dcde3a739e).
 
-Any contribution to enhance tests is really really appreciated 🙂.
+Menu:
+
+-   [useSwitchMap](#useswitchmap)
+-   [useSwitchMapO](#useswitchmapo)
+-   [Common needs](#common-needs)
+
 &nbsp;
 
 ## useSwitchMap
@@ -157,7 +162,7 @@ const useFetch = (url, cleanup) => {
 In this case, though, the promise will rejects with an `AbortError`, so the magic of `useSwitchMapO` is still needed to prevent the problems we have just discussed.
 &nbsp;
 
-## Common situations
+## Common needs
 
 ### The Vue composition function depends on some static configuration
 
