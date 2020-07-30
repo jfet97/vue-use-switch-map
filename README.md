@@ -9,7 +9,7 @@ A Vue 3 composition package that exports:
 -   `useSwitchMap`, a function to compose a ref with a function from values to refs
 -   `useSwitchMapO`, a function to compose a ref with a function from values to objects containing refs
 
-It works with both Vue 3 and Vue 2 + `@vue/composition-api` because I'm using [vue-demi](https://github.com/antfu/vue-demi), and it is written in TypeScript.\
+It works with both Vue 3 and Vue 2 + `@vue/composition-api` because I'm using [vue-demi](https://github.com/antfu/vue-demi), and it is written in TypeScript.
 
 The behaviour is similar to the RxJS switchMap operator.\
 The composition itself will produce a ref, called `switchMappedRef`. Each time the input ref changes:
