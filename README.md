@@ -227,6 +227,8 @@ const switchMappedRef = useSwitchMap(
 I've tried my best to test it, but I clearly suck at it. I've messed a lot with jest, fake timers and watchers without much success, therefore I was unable to express some advanced use cases that I had to personally test using home made solutions.
 Therefore, any contribution in this direction is really really appreciated 😊.
 
+&nbsp;
+
 ## Notes
 
 You can read more about this package in this [blog post](https://dev.to/jfet97/do-vue-3-refs-admit-a-monad-instance-5fan).
