@@ -25,6 +25,8 @@ Menu:
 -   [useSwitchMap](#useswitchmap)
 -   [useSwitchMapO](#useswitchmapo)
 -   [Common needs](#common-needs)
+-   [Contribute](#contribute)
+-   [Notes](#notes)
 
 &nbsp;
 
