@@ -10,7 +10,13 @@ A Vue 3 composition package that exports:
 -   `useSwitchMapO`, a function to compose a ref with a function from values to objects containing refs
 
 It works with both Vue 3 and Vue 2 + `@vue/composition-api` because I'm using [vue-demi](https://github.com/antfu/vue-demi), and it is written in TypeScript.\
-You can read more about this package in this [blog post](https://dev.to/jfet97/do-vue-3-refs-admit-a-monad-instance-5fan).
+
+The behaviour is similar to the RxJS switchMap operator.\
+The composition itself will produce a ref, called `switchMappedRef`. Each time the input ref changes:
+
+1. the ref previously returned by the composed function will be discarded, so the `switchMappedRef` will no longer be updated by its changes
+2. the composed function runs again, producing a new ref
+3. `switchMappedRef` is connected to this fresh ref, receiving its updates
 
 Menu:
 
@@ -216,3 +222,7 @@ const switchMappedRef = useSwitchMap(
 
 I've tried my best to test it, but I clearly suck at it. I've messed a lot with jest, fake timers and watchers without much success, therefore I was unable to express some advanced use cases that I had to personally test using home made solutions.
 Therefore, any contribution in this direction is really really appreciated 😊.
+
+## Notes
+
+You can read more about this package in this [blog post](https://dev.to/jfet97/do-vue-3-refs-admit-a-monad-instance-5fan).

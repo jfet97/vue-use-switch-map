@@ -1,7 +1,7 @@
 {
     "name": "vue-use-switch-map",
     "version": "0.1.1",
-    "description": "A Vue composition that let you compose a ref with a function from values to refs. The logic is similar to the RxJS switchMap.",
+    "description": "A Vue composition that let you compose a ref with a function from values to refs. The logic is similar to the RxJS switchMap operator.",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
     "typings": "dist/esm/index.d.ts",
