@@ -24,9 +24,9 @@ function useSwitchMap<T, U>(
 ): Ref<U>
 ```
 
-`useSwitchMap` takes a ref and a function from values to refs, returning a ref that will see its value changed because of two main reasons: the composed function does change its returned ref's value, or the input ref's value has been changed.\
+`useSwitchMap` takes a ref and a function from values to refs, returning a ref that will see its value changed because of two main reasons: the composed function changes its returned ref's value, or the input ref's value has been changed.\
 The first case is not special at all, I'm sure you already use some Vue 3 composition functions that internally listen to some events, or use some timeouts, promises, etc. and therefore change the ref's value they return in response to those happenings.\
-The second case is more tricky, because lot fo stuff happens when the input ref's value (`Res<T>`) is changed. The `projectionFromValuesToRefs` function is re-runned from scratch, producing a new ref `R`. This ref is automagically substituted to the one that `useSwitchMap` has returned, in such a way that it will receive only the updates from the last ref `R` produced.
+The second case is more tricky, because a lot of stuff happens when the input ref's value is changed. The composed function is re-runned from scratch, producing a new ref `R`. This ref is automagically substituted to the one that `useSwitchMap` has returned, in such a way that it will receive only the updates from the last ref `R` produced.
 
 A function is passed to `projectionFromValuesToRefs` to let it set a cleanup function that will be called just before `projectionFromValuesToRefs` is runned again.
 
@@ -78,12 +78,12 @@ const switchMappedRef = useSwitchMap(mouseClickPoisitonRef, (initP, cleanup) => 
 })
 ```
 
-Here `switchMappedRef` will be a ref to an array, initially empty, that will be updated with the pointer positions after the first click. Each time we click again, the function that tracks the mouse will be called again, so `switchMappedRef` will be updated with a new, fresh array. We do use the `cleanup` function to set a function that will remove the event listener because, even if older listeners do not interfere with `switchMappedRef`, we don't like memory leaks.
+Here `switchMappedRef` will be a ref to an array that will be updated with the pointer positions after the first click. Each time we click somewhere on the screen, the function that tracks the mouse will be called again, so `switchMappedRef` will be updated with a new, fresh array. We do use the `cleanup` function to set a function that will remove the event listener because, even if older listeners do not interfere with `switchMappedRef`, we don't like memory leaks.
 &nbsp;
 
 ## useSwitchMapO
 
-A function like `useSwitchMap` is not enough for the case when the composed function returns an object where each property is itself a ref. This is why useSwitchMapO was born.
+A function like `useSwitchMap` is not enough in the case the composed function returns an object where each property is itself a ref. This is why `useSwitchMapO` was born.
 
 ```ts
 function useSwitchMapO<T, R extends object>(
@@ -129,7 +129,7 @@ const urlRef = computed(() => `https://jsonplaceholder.typicode.com/todos/${coun
 const { dataRef, errorMessageRef, isPendingRef } = useSwitchMapO(urlRef, useFetch)
 ```
 
-As you can see, we have not to worry about older fetch calls that may take longer than the last one, with the risk of having our `dataRef`, `errorMessageRef` and `isPendingRef` changed by them.
+As you can see, we don't have to worry about older fetch calls that may take longer than the last one, with the risk of having our `dataRef`, `errorMessageRef` and `isPendingRef` changed by them.
 
 Moreover, you can always use the cleanup function argument to set up a cleaup function, e.g. to stop an asynchronous computation:
 
