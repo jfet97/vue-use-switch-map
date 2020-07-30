@@ -1,5 +1,5 @@
 {
-    "name": "useswitchmap",
+    "name": "vue-use-switch-map",
     "version": "0.1.1",
     "description": "A Vue composition that let you compose a ref with a function from values to refs",
     "main": "dist/cjs/index.js",

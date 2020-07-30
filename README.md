@@ -1,7 +1,7 @@
 # useswitchmap
 
 ```sh
-npm i -S useswitchmap
+npm i -S vue-use-switch-map
 ```
 
 A Vue 3 composition package that exports:
@@ -42,7 +42,7 @@ We want to track all the pointer positions after an initial click that starts th
 Here it is:
 
 ```ts
-import { useSwitchMap } from 'useswitchmap'
+import { useSwitchMap } from 'vue-use-switch-map'
 import { ref } from 'vue'
 
 // click handling
@@ -105,7 +105,7 @@ Our goal is to compose the following `useFetch` Vue composition function with a 
 Using `useSwitchMapO` will be a breeze:
 
 ```js
-import { useSwitchMapO } from 'useswitchmap'
+import { useSwitchMapO } from 'vue-use-switch-map'
 import { ref, computed } from 'vue'
 
 const useFetch = (url) => {
